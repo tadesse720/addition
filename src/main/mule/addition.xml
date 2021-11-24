@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c73f6808-410a-4c3d-afb7-cc47abdf7ebb" >
+		<http:listener-connection host="localhost" port="9001" />
+	</http:listener-config>
+	<flow name="mainflow" doc:id="6e1f0b53-cb02-44d8-a8d0-5447e32d1c05" >
+		<http:listener doc:name="Listener" doc:id="161fc9ad-738d-4a5e-bc48-7ce63932aca8" config-ref="HTTP_Listener_config" path="/"/>
+		<set-variable value="#[message.attributes.queryParams.num1]" doc:name="Set Variable" doc:id="e8fa0987-819f-420e-80bb-9f32efcb58b9" variableName="num1"/>
+		<set-variable value="#[message.attributes.queryParams.num2]" doc:name="Set Variable" doc:id="05abdd2f-5c17-46de-8bbc-c55dfb08110b" variableName="num2"/>
+		<flow-ref doc:name="Flow Reference" doc:id="8eb23ac5-d1bf-4674-ae29-9c8c71129287" name="childflow" target="tadesse"/>
+		<logger level="INFO" doc:name="Logger" doc:id="040d77cc-3fc9-431c-8497-52845c83b6f0" message='#["payload after call" ++ payload]'/>
+		<logger level="INFO" doc:name="Logger" doc:id="d097e5e9-2d58-4033-9ac5-b87082a77e4c" message="#[vars.tadesse]"/>
+	</flow>
+	<flow name="childflow" doc:id="bea563a7-35b6-4dfb-b5fb-f8d7612e7967" >
+		<logger level="INFO" doc:name="Logger" doc:id="57f9c4ab-08a7-4fec-8bce-14040fad4809" message='#["payload at child flow" ++ payload]'/>
+		<logger level="INFO" doc:name="Logger" doc:id="879394ef-26e0-410a-91dc-fc843020a09b" message="#[vars.num1]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="7e5389c9-bc78-49f6-8726-da7a8457de0e" message="#[vars.num2]"/>
+		<set-payload doc:name="Set Payload" doc:id="0d280db4-e9f5-4bb1-92d9-96301d63791f" value='#["addtion result " ++  (vars.num1 + vars.num2) as String]'/>
+	</flow>
+</mule>
